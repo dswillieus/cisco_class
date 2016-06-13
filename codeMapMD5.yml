@@ -1,0 +1,4 @@
+---
+
+NX9000:
+- { n9kCodeVer: '7.0(3)I3(1)', n9kFile: 'nxos.7.0.3.I3.1.bin', n9kCodeMD5: '7b0f4f2326628489b69839fd120932cb' }

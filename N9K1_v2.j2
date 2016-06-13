@@ -1,0 +1,56 @@
+hostname {{ hostname }}
+
+username {{ username }} password {{ password }}
+username {{ user1 }} password {{ user1_password }}
+
+banner motd *
+{{ banner_motd }}
+*
+
+ip domain-name {{ domain_name }}
+
+vtp mode {{ vtp_mode }}
+
+snmp-server contact {{ snmp.contact }}
+snmp-server location {{ snmp.location }}
+snmp-server community {{ snmp.ro_string }} group network-operator
+snmp-server community {{ snmp.rw_string }} group network-admin
+
+ntp server {{ ntp_server }}
+
+{% for route in routes %}
+{{ route }}
+{%- endfor %}
+# VLAN CREATION
+{% for vlan in vlans %}
+vlan {{ vlan.id }}
+{%- if vlan.name %}
+ name {{ vlan.name }}
+{% endif %}
+{%- endfor %}
+
+vrf context {{ vrf_name }}
+	ip domain-name {{ domain_name }}
+	{{ route }}
+
+{% for interface in interfaces %}
+interface {{ interface.intf }}
+{%- if interface.intf == 'mgmt0' %}
+ vrf member management
+ ip address {{ interface.ip }}
+{%- endif %}
+ {{ interface.switchport }}
+{%- if interface.switchport == 'no switchport' %}
+ ip address {{ interface.ip }}
+{%- endif %}
+{%- if interface.switchport == 'switchport' %}
+ switchport mode {{ interface.mode }}
+ switchport trunk native vlan {{ interface.native_vlan }}
+ switchport trunk allowed vlan {{ interface.vlan_range }}
+{%- endif %}
+ {{ interface.state }}
+{% endfor %}
+
+
+
+

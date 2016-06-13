@@ -1,0 +1,17 @@
+
+
+for key,value in router1.iteritems():
+	if key == 'neighbors':
+		for each in value:
+			for k,v in each.iteritems():
+				if k == 'hostname':
+					print v
+
+# or do it this way
+
+for key,value in router1.interitems():
+	if key == 'neighbors':
+		for each in value:
+			print each['hostname']
+
+

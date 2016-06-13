@@ -1,0 +1,65 @@
+
+
+
+
+import xmltodict
+import json
+
+# import Device from device.py script
+
+from device import Device
+
+# create a device called sw1
+
+sw1 = Device(ip='172.31.217.135', username='admin', password='cisco123')
+
+# open a nxapi connection to device sw1
+
+sw1.open()
+
+command = sw1.show('show interface ethernet1/1')
+print command
+
+result = xmltodict.parse(command[1])
+
+print json.dumps(command, indent=4)
+
+# create variable ip & mask
+ip = result['ins_api']['outputs']['output']['body']['TABLE_interface']['ROW_interface']['eth_ip_addr']
+mask = result['ins_api']['outputs']['output']['body']['TABLE_interface']['ROW_interface']['eth_ip_mask']
+
+# display ip prefix for interface
+print ip + '/' + mask
+
+# issue show vlan command
+sh_vlan = sw1.show('show vlan')
+sh_vlan_dict = xmltodict.parse(sh_vlan[1])
+
+print json.dumps(sh_vlan_dict, indent=4)
+
+# create variable vlan10_name
+vlan10_name = sh_vlan_dict['ins_api']['outputs']['output']['body']['TABLE_vlanbrief']['ROW_vlanbrief'][1]['showvlanbr-vlanname']
+
+#display vlan name
+print vlan10_name
+
+# display sorted list of vlan names
+
+vlans = sh_vlan_dict['ins_api']['outputs']['output']['body']['TABLE_vlanbrief']['ROW_vlanbrief']
+for each in vlans:
+	print 'VLAN ID: ', each['showvlanbr-vlanid-utf']
+	print 'VLAN NAME: ', each['showvlanbr-vlanname']
+	print '=' * 25
+
+# Send configuration commands to the NX-OS
+
+push_l3port = sw1.conf('config t ; interface ethernet1/24 ; no switchport ')
+push_l3ip = sw1.conf('config t ; interface ethernet1/24 ; ip address 172.19.21.1/24 ')
+cmd = 'config t ; interface ethernet1/24 ;'
+push_state = sw1.conf(cmd + 'no shutdown')
+
+# Test push
+push_state_dict = xmltodict.parse(push_state[1])
+
+print json.dumps(push_state_dict, indent=4)
+

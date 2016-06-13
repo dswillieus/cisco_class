@@ -1,0 +1,36 @@
+
+hostname N9K1
+
+feature telnet
+feature nxapi
+feature bash-shell
+feature scp-server
+feature interface-vlan
+feature lacp
+feature vpc
+feature lldp
+feature vtp
+
+username cisco password !cisco123!
+
+banner motd *
+PROPERTY OF CISCO. DISCONNECT FROM DEVICE IMMEDIATELY.
+IF YOU CONTINUE, YOU WILL BE PROSECUTED TO THE FULLEST
+EXTENT OF THE LAW!!!!
+*
+
+ssh login-attempts 10
+
+ip domain-lookup
+ip domain-name cisconxapi.com
+
+vtp mode transparent
+vtp domain LAB
+
+snmp-server contact NET_ADMIN
+snmp-server location NETOPS_LAB
+
+snmp-server community RORORO1 group network-operator
+snmp-server community RWRWRW1 group network-admin
+
+ntp server 192.168.50.11
